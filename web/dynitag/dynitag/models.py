@@ -198,6 +198,8 @@ class Audio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     rel_path = db.Column(db.String, unique=True, nullable=False)
+    orig_label = db.Column(db.String, nullable=False)
+    norm_label = db.Column(db.String, nullable=False)
     annotations = db.relationship('Annotation',
                                   backref='audio',
                                   lazy='dynamic',

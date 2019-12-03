@@ -111,6 +111,10 @@ StageThreeView.prototype = {
             class: 'stage_3_message'
         });
 
+        var labelsContainer = $('<div>', {
+           class: 'labels_container',
+        });
+
         var tagContainer = $('<div>', {
             class: 'tag_container',
         });
@@ -131,6 +135,13 @@ StageThreeView.prototype = {
         else{
             this.dom = container.append([message, tagContainer]);
         }
+    },
+
+    // Displays the original and normalized label
+    updateLabels: function(origLabel, normLabel) {
+        var my = this;
+        $('.labels_container', this.dom).empty();
+        var 
     },
 
     // Replace the annotation elements with the new elements that contain the

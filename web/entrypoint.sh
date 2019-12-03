@@ -12,6 +12,12 @@ USE_STATIC_PATH=${STATIC_PATH:-'/app/static'}
 
 # Generate Nginx config first part using the environment variables
 echo 'server {
+
+    listen 80 default_server;
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
     location / {
         try_files $uri @app;
     }

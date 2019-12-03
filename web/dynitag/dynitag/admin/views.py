@@ -36,13 +36,19 @@ class MyHomeView(flask_admin.AdminIndexView):
 
 class AdminModelView(ModelView):
     model_form_converter = CustomAdminConverter
+    #column_labels = dict(name='Name', visualizationtype='Visualization Type',
+    #                     feedbacktype='Feedback Type', allowRegions='Allow Regions',
+    #                     n_annotations_per_file='Number of annotations per file',
+    #                     audios_filename='Audio list filename',
+    #                     annotations_filename='Annotations filename')
     column_labels = dict(name='Name', visualizationtype='Visualization Type',
                          feedbacktype='Feedback Type', allowRegions='Allow Regions',
                          allowMultitag='Allow Multitags',
                          n_annotations_per_file='Number of annotations per file',
                          audios_filename='Audio list filename',
                          annotations_filename='Annotations filename')
-    
+
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.role=="admin"
 
@@ -61,8 +67,9 @@ def validate_annotationtags(form, field):
         is_empty = True
         for line in data:
             is_empty = False
-            if not re.match(r'^[a-zA-Z0-9_\s\?]+,[a-zA-Z0-9_\s]+$', line.decode().strip()):
-                raise ValidationError('Wrong annotation file format.')
+            # TODO: check if number of audio == number of labels
+            #if not re.match(r'^[a-zA-Z0-9_\s\?]+,[a-zA-Z0-9_\s]+$', line.decode().strip()):
+            #    raise ValidationError('Wrong annotation file format.')
         data.stream.seek(0) # needed to parse it later
         if is_empty:
             raise ValidationError('Annotation file is empty.')
@@ -74,7 +81,8 @@ def validate_audios(form, field):
         is_empty = True
         for line in data:
             is_empty = False
-            if not re.match(r'.+(wav|mp3|ogg)$', line.decode().strip()):
+            #if not re.match(r'.+(wav|mp3|ogg)$', line.decode().strip()):
+            if not re.match(r'^[a-zA-Z0-9_\s\?]+.+(wav|mp3|ogg)[\s]*,[^,]*,[^,]*$', line.decode().strip()):
                 raise ValidationError('Wrong audio list file format.')
         data.stream.seek(0) # needed to parse it later
         if is_empty:
@@ -124,11 +132,16 @@ class ProjectAdminView(AdminModelView):
 
             audios_file.stream.seek(0) # I need it here. Why ?
             for line in audios_file:
-                rel_path = line.decode().strip()
+                # EDIT: include utterance labels on audio list
+                rel_path, orig_label, norm_label = line.decode().split(',')
+                #rel_path = line.decode().strip()
                 audio = Audio.query.filter(Audio.rel_path==rel_path).first()
                 if not audio:
                     audio = Audio()
-                    audio.rel_path = line.decode().strip()
+                    audio.rel_path = rel_path
+                    audio.orig_label = orig_label
+                    audio.norm_label = norm_label
+                    #audio.rel_path = line.decode().strip()
                 project.audios.append(audio)
             audios_file.stream.seek(0) # needed to save it all
 
@@ -195,6 +208,8 @@ def get_annotations():
         audios.append({
             "id": audio.id,
             "rel_path": audio.rel_path,
+            "orig_label": audio.orig_label,
+            "norm_label": audio.norm_label,
             "annotations": annotations
         })
 

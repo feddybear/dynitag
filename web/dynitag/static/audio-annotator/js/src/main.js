@@ -151,10 +151,10 @@ Annotator.prototype = {
             if (typeof stats !== "undefined"){
                 statsContainer.html(stats);
             }
-/*
+
             // set video url
             $('#tutorial-video').attr('src', tutorialVideoURL);
-*/
+
             // add instructions
             var instructionsContainer = $('#instructions-container');
             instructionsContainer.empty();
