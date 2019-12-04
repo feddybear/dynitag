@@ -138,7 +138,9 @@ Annotator.prototype = {
             var alwaysShowTags = my.currentTask.alwaysShowTags;
             var instructions = my.currentTask.instructions;
             var stats = my.currentTask.stats;
+            var textLabels = my.currentTask.labels;
             my.stages.reset(
+                textLabels,
                 annotationTypes,
                 annotationTags,
                 annotationSolutions,

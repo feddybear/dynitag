@@ -73,8 +73,7 @@ def get_task(project_id):
             data["annotationTypes"][tagtype.id] = tagtype.name
             data["annotationTags"][tagtype.id] = [ann_tag.name for ann_tag in annotation_tags.filter(AnnotationTag.tagtype==tagtype).all()]
         data["url"] = os.path.join(proj.audio_root_url, audio.rel_path)
-        data["origLabel"] = audio.orig_label
-        data["normLabel"] = audio.norm_label
+        data["labels"] = [audio.orig_label, audio.norm_label]
         data["tutorialVideoURL"] = "https://www.youtube.com/embed/Bg8-83heFRM"
         data["alwaysShowTags"] = True
 

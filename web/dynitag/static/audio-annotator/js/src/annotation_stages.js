@@ -111,10 +111,6 @@ StageThreeView.prototype = {
             class: 'stage_3_message'
         });
 
-        var labelsContainer = $('<div>', {
-           class: 'labels_container',
-        });
-
         var tagContainer = $('<div>', {
             class: 'tag_container',
         });
@@ -138,10 +134,38 @@ StageThreeView.prototype = {
     },
 
     // Displays the original and normalized label
-    updateLabels: function(origLabel, normLabel) {
+    updateLabelContents: function(textLabels) {
         var my = this;
-        $('.labels_container', this.dom).empty();
-        var 
+        $('.tag_container', this.dom).empty();
+        $.each(textLabels, function ( textId, text ){
+            var textbox = my.createLabelTextbox(text, textId);
+            $('.tag_container', my.dom).append([textbox]);
+        });
+    },
+
+    createLabelTextbox: function(text, textId) {
+
+        var my = this;
+        var possibleLabels = ["Original","Normalized"];
+
+        var field = $('<div>');
+        var fieldLabel = $('<div>', {
+            class: 'stage_3_label',
+            text: possibleLabels[textId],
+        });
+
+        var fieldContainer = $('<div>', {
+            class: 'annotation_tags',
+            id: textId
+        });
+
+        var textfield = $('<input>', {
+            type: 'text',
+            value: text
+        });
+        fieldContainer.append(textfield);
+
+        return field.append([fieldLabel, fieldContainer])
     },
 
     // Replace the annotation elements with the new elements that contain the
@@ -449,12 +473,14 @@ AnnotationStages.prototype = {
     },
 
     // Reset field values and update the annotation tags and annotation solutions
-    reset: function(annotationTypes, annotationTags, solution, alwaysShowTags) {
+    reset: function(textLabels, annotationTypes, annotationTags, solution, alwaysShowTags) {
         this.clear();
 
         // Update all Tags' Contents
         this.alwaysShowTags = alwaysShowTags || false;
         this.updateContentsTags(annotationTypes, annotationTags);
+        this.updateTextLabels(textLabels);
+
         // Update solution set
         this.annotationSolutions = solution.annotations || [];
 
@@ -464,6 +490,12 @@ AnnotationStages.prototype = {
             this.currentRegion = this.wavesurfer.addRegion({}); 
         }
 
+    },
+
+    updateTextLabels: function(textLabels) {
+        this.stageThreeView.updateLabelContents(
+            textLabels
+        );
     },
 
     // Update stage 3 dom with new proximity tags and annotation tags
