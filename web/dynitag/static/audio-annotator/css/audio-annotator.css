@@ -115,6 +115,11 @@
   margin-top: 25px;
 }
 
+.field_container {
+  text-align: left;
+  margin-top: 25px;
+}
+
 .stage_3_label {
   min-width: 150px;
   display: inline-block;

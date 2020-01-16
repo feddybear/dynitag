@@ -129,6 +129,13 @@ def post_annotation():
     audio_id = data["audio_id"]
     project_id = data["project_id"]
     project = Project.query.get(project_id)
+    orig_label = data["labels"][0]
+    norm_label = data["labels"][1]
+
+    # update labels
+    audio = Audio.query.get(audio_id)
+    audio.orig_label = orig_label
+    audio.norm_label = norm_label
 
     for region in data["annotations"]:
 

@@ -151,8 +151,9 @@ PlayBar.prototype = {
         });
 
         // Play and pause on spacebar keydown
+        // changed to grave symbol, need to use space for labeling
         $(document).on("keydown", function (event) {
-            if (event.keyCode === 32) {
+            if (event.keyCode === 192) {
                 event.preventDefault();
                 my.trackEvent('spacebar-' + (my.wavesurfer.isPlaying() ? 'pause' : 'play'));
                 my.wavesurfer.playPause();

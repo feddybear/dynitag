@@ -115,6 +115,10 @@ StageThreeView.prototype = {
             class: 'tag_container',
         });
 
+        var fieldContainer = $('<div>', {
+            class: 'field_container',
+        });
+
         if (my.allowRegions){
 
             var time = Util.createSegmentTime();
@@ -129,17 +133,17 @@ StageThreeView.prototype = {
             this.dom = container.append([message, time, tagContainer]);
         }
         else{
-            this.dom = container.append([message, tagContainer]);
+            this.dom = container.append([message, fieldContainer, tagContainer]);
         }
     },
 
     // Displays the original and normalized label
     updateLabelContents: function(textLabels) {
         var my = this;
-        $('.tag_container', this.dom).empty();
+        $('.field_container', this.dom).empty();
         $.each(textLabels, function ( textId, text ){
             var textbox = my.createLabelTextbox(text, textId);
-            $('.tag_container', my.dom).append([textbox]);
+            $('.field_container', my.dom).append([textbox]);
         });
     },
 
@@ -156,12 +160,12 @@ StageThreeView.prototype = {
 
         var fieldContainer = $('<div>', {
             class: 'annotation_tags',
-            id: textId
         });
 
         var textfield = $('<input>', {
+            id: 'input-'+textId,
             type: 'text',
-            value: text
+            value: text,
         });
         fieldContainer.append(textfield);
 
@@ -297,6 +301,18 @@ AnnotationStages.prototype = {
         return regionData;
     },
 
+    // Return an array of the labels the user has made
+    getLabels: function() {
+        var labelsData = [];
+        for (var i = 0; i < 2; i++) {
+            var label = $('#input-'+i,this.dom).val()
+
+            labelsData.push(label)
+        }
+
+        return labelsData;
+    },
+
     // Return an array of all the annotations the user has made for this clip
     getAnnotations: function() {
         var annotationData = [];
@@ -320,6 +336,7 @@ AnnotationStages.prototype = {
     },
 
     // Check that all the annotations have the required tags, if not alert the user
+    // changed so that no tags are allowed
     annotationDataValidationCheck: function() {
         if (this.allowRegions && $.isEmptyObject(this.wavesurfer.regions.list)) {
             Message.notifyAlert('Please select a region.'); 
@@ -334,13 +351,15 @@ AnnotationStages.prototype = {
                 var hasAllAnnotations = true;
                 $('.annotation_tags').each(function() {
                     if (!region.annotations.hasOwnProperty(this.id)) {
-                        hasAllAnnotations = false;
+                        hasAllAnnotations = true;
+                        //hasAllAnnotations = false;
                         return;
                     }
                 });
                 if (!hasAllAnnotations) {
-                    Message.notifyAlert('Make sure all your annotations have a tag!'); 
-                    return false;
+                    //Message.notifyAlert('Make sure all your annotations have a tag!'); 
+                    return true;
+                    //return false;
                 }
             }
         }
@@ -435,7 +454,7 @@ AnnotationStages.prototype = {
                 container.fadeOut(10, function(){
                     container.children().detach();
                     container.append(newContent).fadeIn();
-                });          
+                });
             }
         }
         // Alert the user of a hint
@@ -478,8 +497,8 @@ AnnotationStages.prototype = {
 
         // Update all Tags' Contents
         this.alwaysShowTags = alwaysShowTags || false;
-        this.updateContentsTags(annotationTypes, annotationTags);
         this.updateTextLabels(textLabels);
+        this.updateContentsTags(annotationTypes, annotationTags);
 
         // Update solution set
         this.annotationSolutions = solution.annotations || [];

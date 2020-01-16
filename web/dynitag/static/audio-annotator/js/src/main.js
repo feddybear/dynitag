@@ -153,10 +153,10 @@ Annotator.prototype = {
             if (typeof stats !== "undefined"){
                 statsContainer.html(stats);
             }
-
+/*
             // set video url
             $('#tutorial-video').attr('src', tutorialVideoURL);
-
+*/
             // add instructions
             var instructionsContainer = $('#instructions-container');
             instructionsContainer.empty();
@@ -241,6 +241,7 @@ Annotator.prototype = {
                 task_start_time: this.taskStartTime,
                 task_end_time: new Date().getTime(),
                 visualization: this.wavesurfer.params.visualization,
+                labels: this.stages.getLabels(),
                 annotations: this.stages.getAnnotations(),
                 deleted_annotations: this.stages.getDeletedAnnotations(),
                 // List of the different types of actions they took to create the annotations
