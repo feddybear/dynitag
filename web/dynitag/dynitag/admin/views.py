@@ -142,6 +142,10 @@ class ProjectAdminView(AdminModelView):
                     audio.orig_label = orig_label
                     audio.norm_label = norm_label
                     #audio.rel_path = line.decode().strip()
+                else:
+                    audio.orig_label = orig_label
+                    audio.norm_label = norm_label
+                    self.session.commit()
                 project.audios.append(audio)
             audios_file.stream.seek(0) # needed to save it all
 
